@@ -8,6 +8,7 @@ print(f'ReLU:       {F.relu(x)}')
 print(f'Leaky ReLU: {F.leaky_relu(x, negative_slope=0.01)}')
 print(f'Sigmoid:    {F.sigmoid(x)}')
 print(f'Tanh:       {F.tanh(x)}')
+print(f'ELU:        {F.elu(x)}')
 print(f'Softmax:    {F.softmax(x, dim=0)}')
 print(f'Softplus:   {F.softplus(x, beta=0.9)}\n')
 
