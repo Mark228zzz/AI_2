@@ -11,64 +11,69 @@ class Agent:
     def __init__(self, state_size, action_size, buffer_size=10000, batch_size=64, gamma=0.99, lr=0.001, epsilon=1.0, epsilon_decay=0.9995, epsilon_min=0.1):
         self.state_size = state_size
         self.action_size = action_size
-        self.memory = Memory(buffer_size)
-        self.gamma = gamma
-        self.epsilon = epsilon
-        self.epsilon_decay = epsilon_decay
-        self.epsilon_min = epsilon_min
-        self.batch_size = batch_size
-        self.learning_rate = lr
+        self.memory = Memory(buffer_size) # Replay memory to store experiences
+        self.gamma = gamma  # Discount factor for future rewards
+        self.epsilon = epsilon  # Initial exploration rate
+        self.epsilon_decay = epsilon_decay  # Decay rate for epsilon
+        self.epsilon_min = epsilon_min  # Minimum value for epsilon
+        self.batch_size = batch_size  # Batch size for training
+        self.learning_rate = lr  # Learning rate for the optimizer
 
+        # Initialize the primary and target networks
         self.model = Network(state_size, action_size)
         self.target_model = Network(state_size, action_size)
         self.update_target_model()
 
+        # Set up the optimizer
         self.optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
 
     def update_target_model(self):
         self.target_model.load_state_dict(self.model.state_dict())
 
     def act(self, state):
-        if np.random.rand() <= self.epsilon:
+        # Choose an action using epsilon-greedy policy
+        if np.random.rand() <= self.epsilon: # EXPLORATION
             return random.randrange(self.action_size)
+
         state = torch.FloatTensor(state).unsqueeze(0)
         with torch.no_grad():
-            act_values = self.model(state)
+            act_values = self.model(state) # EXPLOITATION
         return torch.argmax(act_values, dim=1).item()
 
     def remember(self, state, action, reward, next_state, done, health):
         self.memory.add(state, action, reward, next_state, done, health)
 
-    def replay(self):
+    def train(self):
+        # Train the model by sampling a batch from replay memory
         if len(self.memory) < self.batch_size:
             return
 
+        # Sample a batch from memory
         states, actions, rewards, next_states, dones, health = self.memory.sample(self.batch_size)
 
+        # Convert to torch tensors
         states = torch.FloatTensor(states)
         actions = torch.LongTensor(actions).unsqueeze(1)
         rewards = torch.FloatTensor(rewards).unsqueeze(1)
         next_states = torch.FloatTensor(next_states)
         dones = torch.FloatTensor(dones).unsqueeze(1)
 
+        # Compute current Q values
         current_q = self.model(states).gather(1, actions)
 
+        # Compute target Q values
         next_q = self.target_model(next_states).max(1)[0].unsqueeze(1)
         target_q = (rewards + (self.gamma * next_q * (1 - dones)))*torch.tensor(health)
 
-        loss = nn.MSELoss()(current_q, target_q)
+        # Compute loss and update the network
+        loss = nn.MSELoss()(current_q, target_q) # Calculate the loss
+        self.optimizer.zero_grad() # Zero gradient
+        loss.backward() # Backpropogate the loss
+        self.optimizer.step() # Update parameters
 
-        self.optimizer.zero_grad()
-        loss.backward()
-        self.optimizer.step()
-
+        # Decay epsilon after each episode
         self.update_eps()
 
     def update_eps(self):
+        # Update epsilon with decay, ensuring it does not fall below epsilon_min
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
-
-    def get_q_values(self, state):
-        state_tensor = torch.FloatTensor(state.flatten()).unsqueeze(0)
-        with torch.no_grad():
-            q_values = self.model(state_tensor)
-        return q_values.squeeze().cpu().numpy()
