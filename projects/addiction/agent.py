@@ -1,44 +1,10 @@
-from env import AddictionEnv
+from memory import Memory
+from network import Network
 import torch
 import torch.nn as nn
 import torch.optim as optim
-import torch.nn.functional as F
-from collections import deque
 import numpy as np
 import random
-import math
-
-
-class Network(nn.Module):
-    def __init__(self, state_size, action_size):
-        super(Network, self).__init__()
-
-        self.fc1 = nn.Linear(state_size, 128)
-        self.fc2 = nn.Linear(128, 128)
-        self.fc3 = nn.Linear(128, action_size)
-
-    def forward(self, x):
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
-
-        return x
-
-
-class Memory:
-    def __init__(self, capacity):
-        self.buffer = deque(maxlen=capacity)
-
-    def add(self, state, action, reward, next_state, done, health):
-        self.buffer.append((state, action, reward, next_state, done, health))
-
-    def sample(self, batch_size):
-        state, action, reward, next_state, done, health = zip(*random.sample(self.buffer, k=batch_size))
-
-        return np.array(state), action, reward, np.array(next_state), done, health
-
-    def size(self):
-        return len(self.buffer)
 
 
 class Agent:
@@ -74,7 +40,7 @@ class Agent:
         self.memory.add(state, action, reward, next_state, done, health)
 
     def replay(self):
-        if self.memory.size() < self.batch_size:
+        if len(self.memory) < self.batch_size:
             return
 
         states, actions, rewards, next_states, dones, health = self.memory.sample(self.batch_size)
@@ -100,41 +66,3 @@ class Agent:
 
     def update_eps(self):
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
-
-env = AddictionEnv()
-state_size = env.size ** 2
-action_size = 4
-
-agent = Agent(state_size, action_size)
-
-episodes = 1000
-update_target_every = 10
-max_steps = 200
-
-for e in range(episodes):
-    state = env.reset().flatten()
-    total_reward = 0
-
-    for time in range(max_steps):
-        action = agent.act(state)
-        next_state, reward, done, info = env.step(action)
-        health = info['health']
-        next_state = next_state.flatten()
-        agent.remember(state, action, reward, next_state, done, health)
-        state = next_state
-        total_reward += reward
-
-        if done:
-            break
-
-        agent.replay()
-
-        env.render(e, episodes, total_reward, health, agent.epsilon)
-
-    agent.update_target_model()
-    print(f"Episode {e+1}/{episodes}, Reward: {total_reward}, Epsilon: {agent.epsilon:.2f}, Health: {health}")
-
-    if e % update_target_every == 0:
-        agent.update_target_model()
-
-env.close()
