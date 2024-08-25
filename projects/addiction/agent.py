@@ -18,17 +18,20 @@ class Agent:
         self.epsilon_min = epsilon_min  # Minimum value for epsilon
         self.batch_size = batch_size  # Batch size for training
         self.learning_rate = lr  # Learning rate for the optimizer
+        self.tau = 0.001 # Tau value for soft update
 
         # Initialize the primary and target networks
         self.model = Network(state_size, action_size)
         self.target_model = Network(state_size, action_size)
-        self.update_target_model()
+        self.soft_update_target_model(self.target_model, self.model, self.tau)
 
         # Set up the optimizer
         self.optimizer = optim.Adam(self.model.parameters(), lr=self.learning_rate)
 
-    def update_target_model(self):
-        self.target_model.load_state_dict(self.model.state_dict())
+    def soft_update_target_model(self, target_model, online_model, tau=0.001):
+        # Soft update the params of target model
+        for target_param, online_param in zip(target_model.parameters(), online_model.parameters()):
+            target_param.data.copy_(tau * online_param.data + (1.0 - tau) * target_param.data)
 
     def act(self, state):
         # Choose an action using epsilon-greedy policy

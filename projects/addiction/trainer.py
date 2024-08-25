@@ -79,7 +79,7 @@ class Trainer:
             self.logger.info(f"Episode {e + 1}/{self.episodes}, Reward: {total_reward:.2f}, Epsilon: {self.agent.epsilon:.2f}, Health: {health}")
 
             # Soft update for target model
-            if (e + 1) % self.update_target_every == 0:
-                self.agent.update_target_model()
+            if e % self.update_target_every == 0:
+                self.agent.soft_update_target_model(self.agent.target_model, self.agent.model)
 
         self.env.close() # Close the env after train
