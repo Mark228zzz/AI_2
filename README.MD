@@ -3,7 +3,7 @@
 ## Table of Contents
 - [Description](#description)
 - [Installation](#installation)
-- [Setting Up a Virtual Enviroment](#setting-up-a-virtual-environmen)
+- [Setting Up a Virtual Enviroment](#setting-up-a-virtual-environment)
 - [Usage](#usage)
 
 ## Description
