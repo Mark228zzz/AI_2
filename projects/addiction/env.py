@@ -76,7 +76,7 @@ class AddictionEnv:
 
         return self.state, reward, self.done, {'health': self.health}
 
-    def render(self, episode, num_episodes, reward, health, eps):
+    def render(self, episode, num_episodes, reward, health, eps, q_values=None, render_q_values=False):
         if self.screen is None:
             pygame.init()
             screen_size = self.size * self.cell_size
@@ -84,18 +84,39 @@ class AddictionEnv:
             pygame.display.set_caption("AddictionEnv Game")
             self.font = pygame.font.Font(None, 36)
 
-        colors = {
-            0: (255, 255, 255),
-            1: (0, 0, 255),
-            2: (255, 0, 0),
-            3: (0, 255, 0)
-        }
+        if render_q_values and q_values is not None:
+            max_q = np.max(q_values)
+            min_q = np.min(q_values)
 
-        for row in range(self.size):
-            for col in range(self.size):
-                color = colors[self.state[row, col]]
-                pygame.draw.rect(self.screen, color, pygame.Rect(col * self.cell_size, row * self.cell_size, self.cell_size, self.cell_size))
-                pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(col * self.cell_size, row * self.cell_size, self.cell_size, self.cell_size), 1)
+            for row in range(self.size):
+                for col in range(self.size):
+                    q_value = q_values[row, col]
+                    normalized_q = (q_value - min_q) / (max_q - min_q) if max_q != min_q else 0.5
+                    color = (
+                        int(255 * (1 - normalized_q)),
+                        0,
+                        int(255 * normalized_q),
+                        int(255 * 0.35)
+                    )
+                    cell_surface = pygame.Surface((self.cell_size, self.cell_size), pygame.SRCALPHA)
+                    cell_surface.fill(color)
+                    self.screen.blit(cell_surface, (col * self.cell_size, row * self.cell_size))
+
+                    pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(col * self.cell_size, row * self.cell_size, self.cell_size, self.cell_size), 1)
+
+        else:
+            colors = {
+                0: (255, 255, 255),
+                1: (0, 0, 255),
+                2: (255, 0, 0),
+                3: (0, 255, 0)
+            }
+
+            for row in range(self.size):
+                for col in range(self.size):
+                    color = colors[self.state[row, col]]
+                    pygame.draw.rect(self.screen, color, pygame.Rect(col * self.cell_size, row * self.cell_size, self.cell_size, self.cell_size))
+                    pygame.draw.rect(self.screen, (0, 0, 0), pygame.Rect(col * self.cell_size, row * self.cell_size, self.cell_size, self.cell_size), 1)
 
         episodes_text = self.font.render(f'Episodes: [{episode}/{num_episodes}]', True, (20, 20, 20))
         current_reward_text = self.font.render(f'Reward: {reward:.2f}', True, (20, 20, 20))

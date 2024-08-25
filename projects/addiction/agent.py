@@ -66,3 +66,9 @@ class Agent:
 
     def update_eps(self):
         self.epsilon = max(self.epsilon_min, self.epsilon * self.epsilon_decay)
+
+    def get_q_values(self, state):
+        state_tensor = torch.FloatTensor(state.flatten()).unsqueeze(0)
+        with torch.no_grad():
+            q_values = self.model(state_tensor)
+        return q_values.squeeze().cpu().numpy()

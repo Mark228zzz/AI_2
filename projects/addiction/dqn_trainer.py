@@ -1,3 +1,5 @@
+import torch
+import numpy as np
 from env import AddictionEnv
 from agent import Agent
 import logging
@@ -16,7 +18,8 @@ class Trainer:
             epsilon = 1.0,
             epsilon_decay = 0.995,
             epsilon_min = 0.1,
-            show_logs = False
+            show_logs = False,
+            render_q_values = False
         ):
 
         self.episodes = num_episodes
@@ -28,6 +31,7 @@ class Trainer:
         action_size = 4
 
         self.show_logs = show_logs
+        self.render_q_values = render_q_values
 
         self.agent = Agent(
             state_size=state_size,
@@ -41,7 +45,7 @@ class Trainer:
             epsilon_min=epsilon_min
         )
 
-        logging.basicConfig(level=logging.INFO)
+        logging.basicConfig(level=logging.INFO if show_logs else logging.WARNING)
         self.logger = logging.getLogger('DQNTrainer')
 
     def train_episode(self, episode):
@@ -62,14 +66,24 @@ class Trainer:
 
             self.agent.replay()
 
-            self.env.render(episode, self.episodes, total_reward, health, self.agent.epsilon)
+        q_values_grid = None
+        if self.render_q_values:
+            q_values_grid = np.zeros((self.env.size, self.env.size))
+            for row in range(self.env.size):
+                for col in range(self.env.size):
+                    state = np.zeros((self.env.size, self.env.size))
+                    state[row, col] = 1
+                    q_values = self.agent.get_q_values(state)
+                    q_values_grid[row, col] = np.max(q_values)
+
+        self.env.render(episode, self.episodes, total_reward, health, self.agent.epsilon, q_values_grid, self.render_q_values)
 
         return total_reward, health
 
     def learn(self):
         for e in range(self.episodes):
             total_reward, health = self.train_episode(e + 1)
-            if self.show_logs: self.logger.info(f"Episode {e + 1}/{self.episodes}, Reward: {total_reward:.2f}, Epsilon: {self.agent.epsilon:.2f}, Health: {health}")
+            self.logger.info(f"Episode {e + 1}/{self.episodes}, Reward: {total_reward:.2f}, Epsilon: {self.agent.epsilon:.2f}, Health: {health}")
 
             if (e + 1) % self.update_target_every == 0:
                 self.agent.update_target_model()
