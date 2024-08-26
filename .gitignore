@@ -1,2 +1,2 @@
 torch_env/
-projects/addiction/__pycache__/
+projects/*/__pycache__/
