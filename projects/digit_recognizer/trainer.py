@@ -44,6 +44,4 @@ class Trainer:
                 total += labels.size(0) # Add to total
                 correct += (predicted == labels).sum().item() # Add if predicted equals right answer
 
-                print(f'Predicted: {predicted}, Label: {labels}')
-
         print(f'Test Accuracy: {100 * correct / total:.3f}%')
