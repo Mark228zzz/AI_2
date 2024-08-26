@@ -8,7 +8,10 @@ if __name__ == "__main__":
     dataset = MNISTDataset(batch_size=64)
     model = CNN()
 
-    trainer = Trainer(model, dataset.train_loader, dataset.test_loader, lr=0.001, num_epochs=5, device='cpu')
+    # Initialize the trainer with the specified device
+    # Check if CUDA (GPU) is available and set the device accordingly
+    # If not set to device 'cpu'
+    trainer = Trainer(model, dataset.train_loader, dataset.test_loader, lr=0.001, num_epochs=5, device='cuda')
 
     trainer.train() # Train the model
     trainer.evaluate() # Evaluate the model
