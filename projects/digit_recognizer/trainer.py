@@ -4,8 +4,9 @@ import torch.optim as optim
 
 
 class Trainer:
-    def __init__(self, model, train_loader, test_loader, lr=0.001, num_epochs=5):
-        self.model = model
+    def __init__(self, model, train_loader, test_loader, lr = 0.001, num_epochs = 5, device = 'cuda'):
+        self.device = device # Set device: cuda (GPU) or cpu
+        self.model = model.to(device)
         self.train_loader = train_loader
         self.test_loader = test_loader
         self.criterion = nn.CrossEntropyLoss() # Loss function for classification
@@ -17,7 +18,10 @@ class Trainer:
             self.model.train() # Set model to the train mode
 
             for images, labels in self.train_loader:
+                images, labels = images.to(self.device), labels.to(self.device) # Move data to the device
+
                 self.optimizer.zero_grad() # Zero gradient
+
                 outputs = self.model(images) # Forward pass
                 loss = self.criterion(outputs, labels) # Calculate the loss
                 loss.backward() # Backpropagate the loss
@@ -32,6 +36,8 @@ class Trainer:
 
         with torch.no_grad(): # Turn off gradient
             for images, labels in self.test_loader:
+                images, labels = images.to(self.device), labels.to(self.device)  # Move data to the device
+
                 outputs = self.model(images)
                 _, predicted = torch.max(outputs.data, 1) # Get predicted
 
