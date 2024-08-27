@@ -1,7 +1,7 @@
 from trainer import Trainer
 
 def main():
-    trainer = Trainer(map_size=10, max_steps=40, cell_size=80)
+    trainer = Trainer(device='cuda', map_size=10, max_steps=40, cell_size=80)
 
     trainer.train()
 

@@ -1,3 +1,4 @@
+import torch
 from env import GridNavigatorEnv
 from agent import Agent
 
@@ -5,6 +6,7 @@ from agent import Agent
 class Trainer:
     def __init__(
         self,
+        device = None,
         map_size = 5,
         num_episodes = 1000,
         max_steps = 100,
@@ -20,6 +22,7 @@ class Trainer:
     ):
 
         # Initialize parameters for the environment and training
+        self.device = device if device else torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.map_size = map_size  # Size of the grid map
         self.num_episodes = num_episodes  # Total number of episodes to train
         self.max_steps = max_steps  # Maximum steps per episode
