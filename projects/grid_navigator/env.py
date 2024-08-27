@@ -69,7 +69,7 @@ class GridNavigatorEnv:
             pygame.display.set_caption("DCQN Agent in 2D Grid World")
 
 
-    def render(self, episode, num_episodes, reward, epsilon):
+    def render(self, episode, num_episodes, step, max_steps, reward, epsilon):
         self._is_screen_none()
 
         # Fill the screen with a white background
@@ -88,13 +88,15 @@ class GridNavigatorEnv:
 
         # Create texts surface objects
         text_episodes = self.font.render(f'Episodes: [{episode}/{num_episodes}]', True, (90, 90 ,90))
+        text_steps = self.font.render(f'Steps: [{step}/{max_steps}]', True, (90, 90 ,90))
         text_reward = self.font.render(f'Reward: {reward:.2f}', True, (90, 90 ,90))
         text_epsilon = self.font.render(f'Epsilon: {epsilon:.3f}', True, (90, 90 ,90))
 
         # Draw the texts on the screen
         self.screen.blit(text_episodes, (0, 0))
-        self.screen.blit(text_reward, (0, 30))
-        self.screen.blit(text_episodes, (0, 60))
+        self.screen.blit(text_steps, (0, 30))
+        self.screen.blit(text_reward, (0, 60))
+        self.screen.blit(text_epsilon, (0, 90))
 
         pygame.display.flip()  # Update the display
         self.clock.tick(120)

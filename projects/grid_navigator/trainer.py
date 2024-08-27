@@ -57,7 +57,7 @@ class Trainer:
                 state = next_state  # Update the current state
                 total_reward += reward  # Accumulate the reward
 
-                self.env.render(episode, self.num_episodes, total_reward, self.agent.epsilon)  # Render the current state of the environment
+                self.env.render(episode + 1, self.num_episodes, step, self.max_steps, total_reward, self.agent.epsilon)  # Render the current state of the environment
 
                 if done:
                     self.agent.soft_update_target_model()  # Soft update the target network after the episode ends
