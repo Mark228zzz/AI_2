@@ -1,3 +1,4 @@
+import sys
 import pygame
 import numpy as np
 
@@ -9,6 +10,7 @@ class GridNavigatorEnv:
         self.cell_size = cell_size # Size of each cell in the grid in pixels
         self.state = None
         self.done = None
+        self.clock = pygame.time.Clock()
 
         if init_state: self.reset()
 
@@ -69,18 +71,25 @@ class GridNavigatorEnv:
         # Fill the screen with a white background
         self.screen.fill((255, 255, 255))
 
-        # Draw the grid with the agent and food
+        # Draw the grid with the agent and point
         for row in range(self.size):
             for col in range(self.size):
                 rect = pygame.Rect(col * self.cell_size, row * self.cell_size, self.cell_size, self.cell_size)
                 if np.array_equal(self.agent_pos, [row, col]):
                     pygame.draw.rect(self.screen, (0, 0, 255), rect)  # Blue for the agent
-                elif np.array_equal(self.food_pos, [row, col]):
-                    pygame.draw.rect(self.screen, (255, 0, 0), rect)  # Red for the food
+                elif np.array_equal(self.point_pos, [row, col]):
+                    pygame.draw.rect(self.screen, (255, 0, 0), rect)  # Red for the point
                 else:
                     pygame.draw.rect(self.screen, (200, 200, 200), rect, 1)  # Grey grid lines
 
         pygame.display.flip()  # Update the display
+        self.clock.tick(120)
+
+        # Quit the env
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
 
     def close(self):
         # Close the Pygame window if it was opened

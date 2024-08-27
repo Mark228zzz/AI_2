@@ -3,7 +3,7 @@ import torch.nn.functional as F
 
 
 # Define the Deep Convolutional Q-Network (DCQN)
-class DCQN(nn.MOdule):
+class DCQN(nn.Module):
     def __init__(self, state_shape, action_size):
         super(DCQN, self).__init__()
 
@@ -13,7 +13,7 @@ class DCQN(nn.MOdule):
         self.conv3 = nn.Conv2d(64, 64, kernel_size=3, stride=1)
 
         # Fully connected layers to estimate Q-values for each action
-        self.fc1 = nn.Linear(64 * 3 * 3, 512)
+        self.fc1 = nn.Linear(64 * 4 * 4, 512)
         self.fc2 = nn.Linear(512, action_size)
 
     def forward(self, x):
