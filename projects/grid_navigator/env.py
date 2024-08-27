@@ -3,14 +3,18 @@ import pygame
 import numpy as np
 
 
+
 class GridNavigatorEnv:
     def __init__(self, size, cell_size = 40, init_state = False):
+        pygame.init()
+
         self.size = size
         self.screen = None # Pygame screen object, initialized later
         self.cell_size = cell_size # Size of each cell in the grid in pixels
         self.state = None
         self.done = None
         self.clock = pygame.time.Clock()
+        self.font = pygame.font.Font(None, 50)
 
         if init_state: self.reset()
 
@@ -65,7 +69,7 @@ class GridNavigatorEnv:
             pygame.display.set_caption("DCQN Agent in 2D Grid World")
 
 
-    def render(self):
+    def render(self, episode, num_episodes, reward, epsilon):
         self._is_screen_none()
 
         # Fill the screen with a white background
@@ -81,6 +85,16 @@ class GridNavigatorEnv:
                     pygame.draw.rect(self.screen, (255, 0, 0), rect)  # Red for the point
                 else:
                     pygame.draw.rect(self.screen, (200, 200, 200), rect, 1)  # Grey grid lines
+
+        # Create texts surface objects
+        text_episodes = self.font.render(f'Episodes: [{episode}/{num_episodes}]', True, (90, 90 ,90))
+        text_reward = self.font.render(f'Reward: {reward:.2f}', True, (90, 90 ,90))
+        text_epsilon = self.font.render(f'Epsilon: {epsilon:.3f}', True, (90, 90 ,90))
+
+        # Draw the texts on the screen
+        self.screen.blit(text_episodes, (0, 0))
+        self.screen.blit(text_reward, (0, 30))
+        self.screen.blit(text_episodes, (0, 60))
 
         pygame.display.flip()  # Update the display
         self.clock.tick(120)
