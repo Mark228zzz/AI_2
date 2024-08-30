@@ -3,7 +3,6 @@ import pygame
 import numpy as np
 
 
-
 class GridNavigatorEnv:
     def __init__(self, size, cell_size = 40, init_state = False):
         pygame.init()
@@ -31,7 +30,7 @@ class GridNavigatorEnv:
     def _get_state(self):
         state = np.zeros((1, self.size, self.size), dtype=np.float32)
         state[0, self.agent_pos[0], self.agent_pos[1]] = 1 # Agent
-        state[0, self.agent_pos[0], self.agent_pos[1]] = 10 # Point
+        state[0, self.agent_pos[0], self.agent_pos[1]] = -1 # Point
 
         return state # Return the state as a 2D grid
 
