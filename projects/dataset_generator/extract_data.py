@@ -14,7 +14,7 @@ for i in range(10):
 
 # Load the MNIST dataset
 transform = transforms.ToTensor()
-mnist_train = datasets.MNIST(root='./data', train=True, download=True, transform=transform)
+mnist_train = datasets.MNIST(root='./projects/dataset_generator/data', train=True, download=True, transform=transform)
 
 # Counters for each digit
 digit_count = {str(i): 0 for i in range(10)}
