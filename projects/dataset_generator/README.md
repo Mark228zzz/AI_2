@@ -11,7 +11,15 @@ To begin, run the extract_data.py script. This will automatically install the MN
 python extract_data.py
 ```
 
-**Step 2: Train the Model:**
+**Step 2: Create Required Folders**
+
+Before proceeding with training, make sure to create the necessary folders for storing the generated images and trained models:
+
+```bash
+mkdir generated_images models
+```
+
+**Step 3: Train the Model:**
 
 Next, run the main.py file to start the training process:
 
@@ -26,11 +34,11 @@ During training, two models will be created:
 
 You can adjust the training parameters such as the number of epochs, batch size, and learning rate in the main.py file to experiment with different hyperparameters for better performance.
 
-**Step 3: Generate Images:**
+**Step 4: Generate Images:**
 
 Once training is complete, the GENERATOR model can be used to generate images on demand. It produces tensors in the format `[num_imgs, 1, 64, 64]`. For example, to generate 20 images of the digit "4", the generator will return a tensor of shape `[20, 1, 64, 64]`.
 
-**Step 4: Test the Model:**
+**Step 5: Test the Model:**
 
 To test the trained generator, edit the test_generator.py file by specifying the path to your GENERATOR model (e.g., models/GEN_2000ep.pth). Then, run the script to generate 10 images for each digit (0-9).
 
