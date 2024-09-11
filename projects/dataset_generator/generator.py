@@ -4,7 +4,7 @@ import numpy as np
 
 
 class Generator(nn.Module):
-    def __init__(self, classes, channels, img_size, latent_dim, device):
+    def __init__(self, classes=10, channels=1, img_size=64, latent_dim=100, device='cuda:0'):
         super(Generator, self).__init__()
 
         # Initialize parameters
