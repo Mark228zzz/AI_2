@@ -2,7 +2,7 @@ import os
 from torchvision import datasets, transforms
 
 # Create a directory structure
-main_dir = "my_mnist_images"
+main_dir = "./projects/dataset_generator/mini_mnist_data"
 if not os.path.exists(main_dir):
     os.makedirs(main_dir)
 
