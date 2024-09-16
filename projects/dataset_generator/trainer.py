@@ -49,7 +49,7 @@ class Trainer:
             transforms.ToTensor(),
             transforms.Normalize([0.5], [0.5])  # Normalize to [-1, 1]
         ])
-        dataset = datasets.ImageFolder(root='my_mnist_images', transform=transform)
+        dataset = datasets.ImageFolder(root='mini_mnist_data', transform=transform)
         self.dataloader = DataLoader(dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
 
     def train(self):
