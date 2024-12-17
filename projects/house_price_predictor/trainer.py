@@ -4,7 +4,7 @@ import torch.optim as optim
 from torch.utils.data import TensorDataset, DataLoader, random_split
 from sklearn.metrics import mean_squared_error, r2_score, mean_absolute_error
 from typing import Tuple
-from preprocess_data import get_tensor_data
+from preprocess_data import preprocess_data
 from network import HousePricePredictor
 
 
@@ -27,7 +27,7 @@ class Trainer:
         self.mean_losses = []
 
         # Create TrainLoader and TestLoader
-        tensor_data = get_tensor_data()
+        tensor_data = preprocess_data()
         self.train_loader, self.test_loader = self.create_dataloaders(*tensor_data)
 
         # Create model, criterion and optimizer
@@ -53,6 +53,7 @@ class Trainer:
 
         train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
 
+        # Create train and test DataLoader
         train_loader = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
         test_loader = DataLoader(test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
 
@@ -87,6 +88,8 @@ class Trainer:
         with torch.no_grad():
             for data, targets in self.test_loader:
                 outputs = self.model(data)
+
+                targets, outputs = targets.cpu().numpy(), outputs.cpu().numpy()
 
                 mse += mean_squared_error(targets, outputs)
                 r2 += r2_score(targets, outputs)
