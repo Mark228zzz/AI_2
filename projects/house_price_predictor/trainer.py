@@ -29,8 +29,8 @@ class Trainer:
         self.mean_losses = []
 
         # Create TrainLoader and TestLoader
-        tensor_data = preprocess_data()
-        self.train_loader, self.test_loader = self.create_dataloaders(*tensor_data)
+        tensor_dataset = preprocess_data()
+        self.train_loader, self.test_loader = self.create_dataloaders(*tensor_dataset)
 
         # Create model, criterion and optimizer
         self.model = HousePricePredictor().to(device)
@@ -50,14 +50,17 @@ class Trainer:
 
         dataset_size = len(dataset)
 
-        train_size = int(0.8 * dataset_size) # Get size of the train data
-        test_size = dataset_size - train_size # Get size of the test data
+        train_size = int(0.8 * dataset_size) # Get size of the train dataset
+        test_size = dataset_size - train_size # Get size of the test dataset
 
         train_dataset, test_dataset = random_split(dataset, [train_size, test_size])
 
         # Create train and test DataLoader
-        train_loader = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers)
-        test_loader = DataLoader(test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers)
+        train_loader = DataLoader(train_dataset, batch_size=self.batch_size, shuffle=True,
+                                num_workers=self.num_workers)
+
+        test_loader = DataLoader(test_dataset, batch_size=self.batch_size, shuffle=False,
+                                num_workers=self.num_workers)
 
         return train_loader, test_loader
 

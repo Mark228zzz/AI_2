@@ -17,7 +17,7 @@ def preprocess_data() -> Tuple[torch.Tensor, torch.Tensor]:
         dataset[column] = pd.factorize(dataset[column])[0]
 
     # Separate features (X) and labels (y)
-    x = dataset.iloc[:, 2:]
+    x = dataset.iloc[:, 2:].values
     y = dataset['price'].values.reshape(-1, 1)
 
     # Normalize features and labels using MinMaxScaler

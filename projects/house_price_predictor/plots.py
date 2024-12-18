@@ -19,7 +19,7 @@ def plot_loss(loss: List[float]) -> None:
     plt.legend()
     plt.show()
 
-def plot_predicted_vs_actual(predicted, actual) -> None:
+def plot_predicted_vs_actual(predicted: np.ndarray, actual: np.ndarray) -> None:
     plt.figure(figsize=(10, 8))
 
     # Scatter plot for predicted vs actual values

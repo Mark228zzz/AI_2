@@ -1,7 +1,7 @@
 from trainer import Trainer
 
 def main():
-    trainer = Trainer(num_epochs=100, learning_rate=0.0001)
+    trainer = Trainer(num_epochs=15, learning_rate=0.0001)
 
     # Train the model
     trainer.train_model()
