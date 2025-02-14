@@ -27,7 +27,7 @@ def show_data_info():
 
     # Plot common words in spams
     spam_words = ' '.join(df[df['label'] == 'spam']['message'])
-    wordcloud = WordCloud(width=2000, height=2000).generate(spam_words)
+    wordcloud = WordCloud(width=1024, height=1024).generate(spam_words)
     plt.imshow(wordcloud)
     plt.axis('off')
     plt.title('Spam Messages')
@@ -35,7 +35,7 @@ def show_data_info():
 
     # Plot common words in hams
     spam_words = ' '.join(df[df['label'] == 'ham']['message'])
-    wordcloud = WordCloud(width=2000, height=2000).generate(spam_words)
+    wordcloud = WordCloud(width=1024, height=1024).generate(spam_words)
     plt.imshow(wordcloud)
     plt.axis('off')
     plt.title('Ham Messages')
