@@ -88,6 +88,7 @@ rpds-py==0.20.0
 safetensors==0.4.5
 scikit-learn==1.6.0
 scipy==1.14.1
+seaborn==0.13.2
 setuptools==72.2.0
 six==1.16.0
 smmap==5.0.1
@@ -111,3 +112,4 @@ tzdata==2024.2
 urllib3==2.2.3
 watchdog==5.0.3
 wcwidth==0.2.13
+wordcloud==1.9.4
